@@ -1,0 +1,6 @@
+{
+  "description":"search the web directly from the GNOME shell overview",
+  "name":"Web Search Provider",
+  "shell-version":["3.20"],
+  "uuid":"gnome-shell-web-search-provider@mrakow.github.com"
+}
