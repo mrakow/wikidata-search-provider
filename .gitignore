@@ -1,8 +1,0 @@
-*~
-*.mo
-gschemas.compiled
-locale/
-.idea
-
-nbproject
-/nbproject/private/
