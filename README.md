@@ -9,8 +9,8 @@ It is very much a work in progress.
 1.  To install, clone this repository into the folder for locally installed GNOME Shell extensions:
 
     ```bash
-$ git clone https://github.com/mrakow/gnome-shell-web-search-provider ~/.local/share/gnome-shell/extensions/web-search-provider@mrakow.github.com
-```
+    $ git clone https://github.com/mrakow/gnome-shell-web-search-provider ~/.local/share/gnome-shell/extensions/web-search-provider@mrakow.github.com
+    ```
 2.  Restart GNOME Shell by typing <kbd><kbd>Alt</kbd>+<kbd>F2</kbd></kbd>, <kbd>r</kbd>, and then <kbd><kbd>Enter</kbd></kbd>.
 3.  Enable the Web Search Provider extension in GNOME Tweak Tool or at <https://extensions.gnome.org/local>.
 
