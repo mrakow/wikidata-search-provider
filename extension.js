@@ -25,8 +25,6 @@ const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Util = imports.misc.util;
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-
 const WebSearchProvider = new Lang.Class({
   Name: 'WebSearchProvider',
 
@@ -38,7 +36,7 @@ const WebSearchProvider = new Lang.Class({
       return 'Wikidata Search Provider';
     };
     this.appInfo.get_icon = function () {
-      return Gio.icon_new_for_string(Me.path + '/wikidata_logo.svg');
+      return Gio.icon_new_for_string('system-search');
     };
   },
 
