@@ -1,65 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <schemalist>
 
-  <schema
+<schema
     id="com.github.mrakow.GnomeShellWebSearchProvider"
-    path="/com/github/mrakow/gnome-shell-web-search-provider/"
-  >
-    <child
-      name="search-engines"
-      schema="com.github.mrakow.GnomeShellWebSearchProvider.SearchEngines"
-    >
-    </child>
-  </schema>
+    path="/com/github/mrakow/gnome-shell-web-search-provider/">
+  <key name="available-search-engines" type="a{sa{ss}}">
+    <default>
+      {
+        "20a9e6cd": {
+          "name": "DuckDuckGo",
+          "urlTemplate": "https://duckduckgo.com/?q={searchTerms}"
+        },
+        "53873daa": {
+          "name": "Wikipedia (en)",
+          "urlTemplate": "https://en.wikipedia.org/w/index.php?title=Special:Search&amp;search={searchTerms}"
+        }
+      }
+  </default>
+    <description>
+      Dictionary of all available search engines. The search engines' keys are
+      djb2 hashes of their names. For example, "20a9e6cd" is the key for
+      "DuckDuckGo". Each search engine must have the "name" and "urlTemplate"
+      properties. By default, DuckDuckGo and Wikipedia (en) are available.
+    </description>
+  </key>
+  <key name="enabled-search-engines" type="as">
+    <default>["20a9e6cd", "53873daa"]</default>
+    <description>
+      List of enabled search engines, in order of preference. Search engines are
+      identified by the djb2 hash of their name. Default values are (1.)
+      "20a9e6cd" for "DuckDuckGo" and (2.) "53873daa" for "Wikipedia (en)".
+    </description>
+  </key>
+</schema>
 
-  <schema
-    id="com.github.mrakow.GnomeShellWebSearchProvider.SearchEngines"
-    path="/com/github/mrakow/gnome-shell-web-search-provider/search-engines/"
-  >
-    <key name="list" type="as">
-      <default>
-        ['20a9e6cd', '53873daa']
-      </default>
-      <description>
-        A list of all available search engines. Search engines are identified by
-        the djb2 hash of their name. For example, "20a9e6cd" is the identifier
-        for "DuckDuckGo". Default values are "20a9e6cd" for "DuckDuckGo" and
-        "53873daa" for "Wikipedia (en)".
-      </description>
-    </key>
-    <key name="enabled" type="as">
-      <default>
-        ['20a9e6cd', '53873daa']
-      </default>
-      <description>
-        A list of enabled search engines, in order of preference. Search engines
-        are identified by the djb2 hash of their name. Default values are (1.)
-        "20a9e6cd" for "DuckDuckGo" and (2.) "53873daa" for "Wikipedia (en)".
-      </description>
-    </key>
-  </schema>
-
-  <!--
-    Omit path for relocatable schema. The path is specified when creating the
-    GSettings object.
-
-    An example path could be:
-    /com/github/mrakow/gnome-shell-web-search-provider/search-engines/20a9e6cd/
-  -->
-  <schema id="com.github.mrakow.GnomeShellWebSearchProvider.SearchEngine">
-
-    <key name="name" type="s">
-      <default>''</default>
-    </key>
-
-    <key name="description" type="s">
-      <default>''</default>
-    </key>
-
-    <key name="query-url-template" type="s">
-      <default>''</default>
-    </key>
-
-  </schema>
 </schemalist>
