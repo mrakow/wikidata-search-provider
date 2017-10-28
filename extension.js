@@ -18,7 +18,9 @@
 // And run: journalctl /usr/bin/gnome-session -f -o cat | grep LOG
 
 /* globals imports */
-/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "^init|enable|disable$" }] */
+/* eslint no-unused-vars: ["error", {
+     "varsIgnorePattern": "^init|enable|disable$",
+     "args": none}] */
 
 const Main = imports.ui.main;
 const Gio = imports.gi.Gio;
