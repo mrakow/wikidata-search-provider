@@ -24,6 +24,7 @@ const Main = imports.ui.main;
 const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Util = imports.misc.util;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const WebSearchProvider = new Lang.Class({
   Name: 'WebSearchProvider',
@@ -38,6 +39,13 @@ const WebSearchProvider = new Lang.Class({
     this.appInfo.get_icon = function () {
       return Gio.icon_new_for_string('system-search');
     };
+
+    // Create a settings object to access GSettings
+    let schemaSource = Gio.SettingsSchemaSource.new_from_directory(
+        Me.path + '/schemas', Gio.SettingsSchemaSource.get_default(), false);
+    const schemaObj = schemaSource.lookup(
+        'com.github.mrakow.GnomeShellWebSearchProvider', true);
+    this._settings = new Gio.Settings({ settings_schema: schemaObj });
   },
 
   /**
@@ -48,7 +56,8 @@ const WebSearchProvider = new Lang.Class({
    * the results.
    */
   getInitialResultSet: function (terms, callback) {
-    let results = ['duckduckgo.com']; // TODO: Write a real keyword chooser.
+    let searchEngines = this._settings.get_strv('enabled-search-engines');
+    let results = searchEngines; // TODO: Write a keyword chooser.
     callback(results);
   },
   /**
@@ -83,12 +92,15 @@ const WebSearchProvider = new Lang.Class({
    * array of meta data.
    */
   getResultMetas: function (identifiers, callback) {
-    // TODO: Meta data look-up.
-    let metas = [{
-      id: 'duckduckgo.com',
-      name: 'DuckDuckGo',
-      createIcon: function () {}
-    }];
+    let searchEngineMetas =
+        this._settings.get_value('available-search-engines').deep_unpack();
+    let metas = identifiers.map(function getMeta (identifier) {
+      return {
+        id: identifier,
+        name: searchEngineMetas[identifier].name,
+        createIcon: function () {}
+      };
+    });
     callback(metas);
   },
   /**
@@ -119,15 +131,18 @@ const WebSearchProvider = new Lang.Class({
    * @param  {String[]} terms      Array of search terms, which are treated as
    * logical AND.
    * @param  {number} timestamp  A timestamp of the user interaction that
-   * triggered this call.
+   * triggered this call. In practice, timestamp is not passed to the function.
    */
-  activateResult: function (identifier, terms, timestamp) {
-    // TODO: Real URL template selection.
-    let queryURLTemplate = 'https://duckduckgo.com/?q=%s';
-    let query = terms.slice(1).map(encodeURIComponent).join('+');
-
-    let queryURL = queryURLTemplate.split('%s').map(encodeURI).join(query);
-    Util.spawn(['xdg-open', queryURL]);
+  activateResult: function (identifier, terms) {
+    // // 'terms' is not the same as what was typed, so 'terms' is not used.
+    // let query = terms.join(' ');
+    let query = Main.overview._searchEntry.text;
+    let searchEngineMetas =
+        this._settings.get_value('available-search-engines').deep_unpack();
+    let queryUrlTemplate = searchEngineMetas[identifier].urlTemplate;
+    let queryUrl = queryUrlTemplate.replace(
+        /{searchTerms}/g, encodeURIComponent(query));
+    Util.spawn(['xdg-open', queryUrl]);
   },
 
   /**
