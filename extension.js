@@ -148,14 +148,19 @@ const WebSearchProvider = new Lang.Class({
   },
 
   /**
-   * Launches a full search in the default web browser for the provided terms.
+   * Should launch a full search in the default web browser for the provided
+   * terms. Instead, opens the complete list of search engines in the
+   * preferences.
    * @param  {String[]} terms Array of search terms, which the provider should
    * treat as logical AND.
    * @param  {number} timestamp  A timestamp of the user interaction that
    * triggered this call.
    */
-  launchSearch: function (terms, times) {
-    // TODO: Decide whether to open settings or results page in browser here.
+  launchSearch: function (terms, timestamp) {
+    Util.spawn([
+      'gnome-shell-extension-prefs',
+      'gnome-shell-web-search-provider@mrakow.github.com'
+    ]);
   },
 
   /**
