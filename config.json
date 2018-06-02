@@ -1,0 +1,17 @@
+{
+  "searchEngines": {
+    "DuckDuckGo": {
+      "urlTemplate": "https://duckduckgo.com/?q={searchTerms}",
+      "iconPath": "icons/duckduckgo.ico"
+    },
+    "Wikipedia (en)": {
+      "urlTemplate": "https://en.wikipedia.org/w/index.php?title=Special:Search&search={searchTerms}",
+      "iconPath": "icons/wikipedia.png"
+    },
+    "YouTube Video Search": {
+      "urlTemplate": "https://www.youtube.com/results?search_query={searchTerms}",
+      "iconPath": "icons/youtube.png",
+      "disabled": true
+    }
+  }
+}

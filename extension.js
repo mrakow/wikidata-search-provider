@@ -1,5 +1,6 @@
 // Web Search Provider for GNOME Shell
-// Copyright (C) 2015, 2017 Contributors, Bahodir Mansurov; 2017 Moritz Rakow
+// Copyright (C) 2015, 2017 Contributors, Bahodir Mansurov
+// Copyright (C) 2017, 2018 Moritz Rakow
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,9 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// To debug: log('blah');
-// And run: journalctl /usr/bin/gnome-session -f -o cat | grep LOG
-
 /* globals imports */
 /* eslint no-unused-vars: ["error", {
      "varsIgnorePattern": "^init|enable|disable$",
@@ -25,6 +23,8 @@
 const Main = imports.ui.main;
 const Gio = imports.gi.Gio;
 const Lang = imports.lang;
+const Shell = imports.gi.Shell;
+const St = imports.gi.St;
 const Util = imports.misc.util;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
@@ -41,13 +41,6 @@ const WebSearchProvider = new Lang.Class({
     this.appInfo.get_icon = function () {
       return Gio.icon_new_for_string('system-search');
     };
-
-    // Create a settings object to access GSettings
-    let schemaSource = Gio.SettingsSchemaSource.new_from_directory(
-        Me.path + '/schemas', Gio.SettingsSchemaSource.get_default(), false);
-    const schemaObj = schemaSource.lookup(
-        'com.github.mrakow.GnomeShellWebSearchProvider', true);
-    this._settings = new Gio.Settings({ settings_schema: schemaObj });
   },
 
   /**
@@ -58,9 +51,10 @@ const WebSearchProvider = new Lang.Class({
    * the results.
    */
   getInitialResultSet: function (terms, callback) {
-    let searchEngines = this._settings.get_strv('enabled-search-engines');
-    let results = searchEngines; // TODO: Write a keyword chooser.
-    callback(results);
+    callback(Object.keys(this._searchEngines).filter((key) => {
+      // TODO: Write a keyword chooser.
+      return !this._searchEngines[key]['disabled'];
+    }));
   },
   /**
    * This callback is displayed as part of the {getInitialResultSet} method.
@@ -94,15 +88,17 @@ const WebSearchProvider = new Lang.Class({
    * array of meta data.
    */
   getResultMetas: function (identifiers, callback) {
-    let searchEngineMetas =
-        this._settings.get_value('available-search-engines').deep_unpack();
-    let metas = identifiers.map(function getMeta (identifier) {
-      return {
-        id: identifier,
-        name: searchEngineMetas[identifier].name,
-        createIcon: function () {}
-      };
-    });
+    let metas = identifiers.map((identifier) => ({
+      id: identifier,
+      name: identifier,
+      createIcon: (size) => {
+        let relativeIconPath = this._searchEngines[identifier].iconPath;
+        let extDir = Gio.file_new_for_path(Me.path);
+        let iconFile = extDir.resolve_relative_path(relativeIconPath);
+        let icon = new Gio.FileIcon({file: iconFile});
+        return new St.Icon({gicon: icon, icon_size: size});
+      }
+    }));
     callback(metas);
   },
   /**
@@ -139,9 +135,7 @@ const WebSearchProvider = new Lang.Class({
     // // 'terms' is not the same as what was typed, so 'terms' is not used.
     // let query = terms.join(' ');
     let query = Main.overview._searchEntry.text;
-    let searchEngineMetas =
-        this._settings.get_value('available-search-engines').deep_unpack();
-    let queryUrlTemplate = searchEngineMetas[identifier].urlTemplate;
+    let queryUrlTemplate = this._searchEngines[identifier].urlTemplate;
     let queryUrl = queryUrlTemplate.replace(
         /{searchTerms}/g, encodeURIComponent(query));
     Util.spawn(['xdg-open', queryUrl]);
@@ -182,6 +176,8 @@ function enable () {
             webSearchProvider
         );
   }
+  let config = Shell.get_file_contents_utf8_sync(Me.path + '/config.json');
+  webSearchProvider._searchEngines = JSON.parse(config).searchEngines;
 }
 
 function disable () {
