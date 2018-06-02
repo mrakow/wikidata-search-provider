@@ -11,7 +11,7 @@ It is very much a work in progress.
     GNOME Shell extensions:
 
     ```bash
-    $ git clone https://github.com/mrakow/gnome-shell-web-search-provider ~/.local/share/gnome-shell/extensions/web-search-provider@mrakow.github.com
+    $ git clone https://github.com/mrakow/gnome-shell-web-search-provider ~/.local/share/gnome-shell/extensions/gnome-shell-web-search-provider@mrakow.github.com
     ```
 2.  Restart GNOME Shell by typing <kbd>Alt</kbd>+<kbd>F2</kbd>, <kbd>r</kbd>,
     and then <kbd>Enter</kbd>.
