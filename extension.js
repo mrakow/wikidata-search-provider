@@ -36,7 +36,7 @@ const WebSearchProvider = new Lang.Class({
     // search provider.
     this.appInfo = Gio.AppInfo.get_default_for_uri_scheme('https');
     this.appInfo.get_name = function () {
-      return 'Web Search Provider';
+      return 'Web Search';
     };
     this.appInfo.get_icon = function () {
       return Gio.icon_new_for_string('system-search');
