@@ -134,7 +134,7 @@ const WebSearchProvider = new Lang.Class({
   activateResult: function (identifier, terms) {
     // // 'terms' is not the same as what was typed, so 'terms' is not used.
     // let query = terms.join(' ');
-    let query = Main.overview._searchEntry.text;
+    let query = Main.overview.searchEntry.text;
     let queryUrlTemplate = this._searchEngines[identifier].urlTemplate;
     let queryUrl = queryUrlTemplate.replace(
         /{searchTerms}/g, encodeURIComponent(query));
